@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import './NewUserModal.css';
+import React, { useState, useEffect } from "react";
+import "./NewUserModal.css";
+import axios from "axios";
 
 function NewUserModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
-    customerName: '',
-    contactNumber: '',
-    address: '',
-    documentType: '',
-    documentSubType: '',
-    totalAmount: '',
-    advancePayment: '',
-    balance: '',
-    applicationStatus: '',
-    applicationDate: '',
-    amountPaidDate: '',
-    notes: '',
-    isFullyPaid: false
+    customerName: "",
+    contactNumber: "",
+    address: "",
+    documentType: "",
+    documentSubType: "",
+    totalAmount: "",
+    advancePayment: "",
+    balance: "",
+    applicationStatus: "",
+    applicationDate: "",
+    amountPaidDate: "",
+    notes: "",
+    isFullyPaid: false,
   });
 
   const [documentSubTypes, setDocumentSubTypes] = useState([]);
@@ -24,11 +25,11 @@ function NewUserModal({ isOpen, onClose }) {
   useEffect(() => {
     // Set today's date as application date when modal opens
     if (isOpen) {
-      const today = new Date().toISOString().split('T')[0];
-      setFormData(prev => ({ 
-        ...prev, 
+      const today = new Date().toISOString().split("T")[0];
+      setFormData((prev) => ({
+        ...prev,
         applicationDate: today,
-        amountPaidDate: today
+        amountPaidDate: today,
       }));
     }
   }, [isOpen]);
@@ -36,14 +37,14 @@ function NewUserModal({ isOpen, onClose }) {
   useEffect(() => {
     // Update document subtypes based on document type
     switch (formData.documentType) {
-      case 'License':
-        setDocumentSubTypes(['New', 'Renewal', 'COA', 'Duplicate']);
+      case "License":
+        setDocumentSubTypes(["New", "Renewal", "COA", "Duplicate"]);
         break;
-      case 'Insurance':
-        setDocumentSubTypes(['New', 'Renewal']);
+      case "Insurance":
+        setDocumentSubTypes(["New", "Renewal"]);
         break;
-      case 'RC':
-        setDocumentSubTypes(['New', 'Renewal', 'COA', 'Duplicate']);
+      case "RC":
+        setDocumentSubTypes(["New", "Renewal", "COA", "Duplicate"]);
         break;
       default:
         setDocumentSubTypes([]);
@@ -55,16 +56,16 @@ function NewUserModal({ isOpen, onClose }) {
     const total = parseFloat(formData.totalAmount) || 0;
     const advance = parseFloat(formData.advancePayment) || 0;
     const balance = total - advance;
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData((prev) => ({
+      ...prev,
       balance: balance.toFixed(2),
-      isFullyPaid: balance <= 0
+      isFullyPaid: balance <= 0,
     }));
   }, [formData.totalAmount, formData.advancePayment]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -72,26 +73,31 @@ function NewUserModal({ isOpen, onClose }) {
     setIsSubmitting(true);
     try {
       // Simulate API call for adding a new user
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('New user added successfully!');
-      setFormData({
-        customerName: '',
-        contactNumber: '',
-        address: '',
-        documentType: '',
-        documentSubType: '',
-        totalAmount: '',
-        advancePayment: '',
-        balance: '',
-        applicationStatus: '',
-        applicationDate: '',
-        amountPaidDate: '',
-        notes: '',
-        isFullyPaid: false
-      });
-      onClose();
-    } catch (error) {
-      alert('Error adding new user.');
+      const response = await axios.post(
+        "http://localhost:8000/api/addCustomer",
+        formData
+      );
+      if (response.status == 200) {
+        alert("New user added successfully!");
+        setFormData({
+          customerName: "",
+          contactNumber: "",
+          address: "",
+          documentType: "",
+          documentSubType: "",
+          totalAmount: "",
+          advancePayment: "",
+          balance: "",
+          applicationStatus: "",
+          applicationDate: "",
+          amountPaidDate: "",
+          notes: "",
+          isFullyPaid: false,
+        });
+        onClose();
+      }
+    } catch (e) {
+      alert(e.response?.data?.message || e.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -101,7 +107,7 @@ function NewUserModal({ isOpen, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-button" onClick={onClose} aria-label="Close">
           <i className="fas fa-times"></i>
         </button>
@@ -112,7 +118,9 @@ function NewUserModal({ isOpen, onClose }) {
             <h3 className="section-title">Customer Information</h3>
             <div className="form-row">
               <div className="form-group">
-                <label>Customer Name <span className="required">*</span></label>
+                <label>
+                  Customer Name <span className="required">*</span>
+                </label>
                 <input
                   type="text"
                   name="customerName"
@@ -122,9 +130,13 @@ function NewUserModal({ isOpen, onClose }) {
                 />
               </div>
               <div className="form-group">
-                <label>Contact Number <span className="required">*</span></label>
+                <label>
+                  Contact Number <span className="required">*</span>
+                </label>
                 <div className="input-icon-group">
-                  <span className="input-icon"><i className="fas fa-phone"></i></span>
+                  <span className="input-icon">
+                    <i className="fas fa-phone"></i>
+                  </span>
                   <input
                     type="tel"
                     name="contactNumber"
@@ -138,7 +150,9 @@ function NewUserModal({ isOpen, onClose }) {
               </div>
             </div>
             <div className="form-group full-width">
-              <label>Address <span className="required">*</span></label>
+              <label>
+                Address <span className="required">*</span>
+              </label>
               <textarea
                 name="address"
                 value={formData.address}
@@ -155,7 +169,9 @@ function NewUserModal({ isOpen, onClose }) {
             <h3 className="section-title">Document Information</h3>
             <div className="form-row">
               <div className="form-group">
-                <label>Document Type <span className="required">*</span></label>
+                <label>
+                  Document Type <span className="required">*</span>
+                </label>
                 <select
                   name="documentType"
                   value={formData.documentType}
@@ -169,7 +185,9 @@ function NewUserModal({ isOpen, onClose }) {
                 </select>
               </div>
               <div className="form-group">
-                <label>Document Sub Type <span className="required">*</span></label>
+                <label>
+                  Document Sub Type <span className="required">*</span>
+                </label>
                 <select
                   name="documentSubType"
                   value={formData.documentSubType}
@@ -178,8 +196,10 @@ function NewUserModal({ isOpen, onClose }) {
                   disabled={!formData.documentType}
                 >
                   <option value="">Select Sub Type</option>
-                  {documentSubTypes.map(type => (
-                    <option key={type} value={type}>{type}</option>
+                  {documentSubTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -196,7 +216,9 @@ function NewUserModal({ isOpen, onClose }) {
                 />
               </div>
               <div className="form-group">
-                <label>Application Status <span className="required">*</span></label>
+                <label>
+                  Application Status <span className="required">*</span>
+                </label>
                 <select
                   name="applicationStatus"
                   value={formData.applicationStatus}
@@ -217,9 +239,13 @@ function NewUserModal({ isOpen, onClose }) {
             <h3 className="section-title">Payment Information</h3>
             <div className="form-row">
               <div className="form-group">
-                <label>Total Amount <span className="required">*</span></label>
+                <label>
+                  Total Amount <span className="required">*</span>
+                </label>
                 <div className="input-icon-group">
-                  <span className="input-icon"><i className="fas fa-rupee-sign"></i></span>
+                  <span className="input-icon">
+                    <i className="fas fa-rupee-sign"></i>
+                  </span>
                   <input
                     type="number"
                     name="totalAmount"
@@ -232,9 +258,13 @@ function NewUserModal({ isOpen, onClose }) {
                 </div>
               </div>
               <div className="form-group">
-                <label>Advance Payment <span className="required">*</span></label>
+                <label>
+                  Advance Payment <span className="required">*</span>
+                </label>
                 <div className="input-icon-group">
-                  <span className="input-icon"><i className="fas fa-rupee-sign"></i></span>
+                  <span className="input-icon">
+                    <i className="fas fa-rupee-sign"></i>
+                  </span>
                   <input
                     type="number"
                     name="advancePayment"
@@ -286,20 +316,20 @@ function NewUserModal({ isOpen, onClose }) {
           </div>
 
           <div className="form-actions">
-            <button 
-              type="button" 
-              className="cancel-button"
-              onClick={onClose}
-            >
+            <button type="button" className="cancel-button" onClick={onClose}>
               Cancel
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="submit-button"
               disabled={isSubmitting}
             >
-              <i className={`fas ${isSubmitting ? 'fa-spinner fa-spin' : 'fa-save'}`}></i>
-              {isSubmitting ? 'Adding...' : 'Add User'}
+              <i
+                className={`fas ${
+                  isSubmitting ? "fa-spinner fa-spin" : "fa-save"
+                }`}
+              ></i>
+              {isSubmitting ? "Adding..." : "Add User"}
             </button>
           </div>
         </form>
@@ -308,4 +338,4 @@ function NewUserModal({ isOpen, onClose }) {
   );
 }
 
-export default NewUserModal; 
+export default NewUserModal;

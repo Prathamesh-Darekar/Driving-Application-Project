@@ -91,7 +91,9 @@ const searchCustomer = async (req, res) => {
     return res
       .status(404)
       .json({ message: "Contact number does not exists in the database" });
-  return res.status(200).json({ message: "Success", data: targetCustomer });
+  return res
+    .status(200)
+    .json({ message: "Success", customerData: targetCustomer });
 };
 
 module.exports = { login, addCustomer, searchCustomer };

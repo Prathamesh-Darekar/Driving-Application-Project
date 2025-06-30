@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from './Header';
-import Footer from './Footer';
-import NewUserModal from './NewUserModal';
-import UserDetailsModal from './UserDetailsModal';
-import './Home.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "./Header";
+import Footer from "./Footer";
+import NewUserModal from "./NewUserModal";
+import UserDetailsModal from "./UserDetailsModal";
+import axios from "axios";
+import "./Home.css";
 
 function Home() {
-  const [mobileNumber, setMobileNumber] = useState('');
+  const [mobileNumber, setMobileNumber] = useState("");
   const [isNewUserModalOpen, setIsNewUserModalOpen] = useState(false);
   const [isUserDetailsModalOpen, setIsUserDetailsModalOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -18,24 +19,17 @@ function Home() {
     // Simulate API call to search for user
     try {
       // This would be your actual API call
-      const response = await new Promise(resolve => 
-        setTimeout(() => resolve({
-          customerName: 'John Doe',
-          contactNumber: mobileNumber,
-          documentType: 'License',
-          documentSubType: 'New',
-          totalAmount: '5000',
-          advancePayment: '3000',
-          balance: '2000',
-          applicationStatus: 'Pending',
-          notes: 'Customer requested urgent processing'
-        }), 1000)
+      const response = await axios.get(
+        `http://localhost:8000/api/${mobileNumber}`
       );
-      
-      setUserData(response);
-      setIsUserDetailsModalOpen(true);
+      if (response.status == 200) {
+        setUserData(response.data.customerData[0]);
+        setIsUserDetailsModalOpen(true);
+        // console.log(response.data.customerData[0]);
+      }
     } catch (error) {
-      console.error('Error searching for user:', error);
+      console.error("Error searching for user:", error);
+      alert(e.response?.data?.message || e.message);
       // Handle error (show error message, etc.)
     }
   };
@@ -67,7 +61,7 @@ function Home() {
 
         <div className="new-user-container">
           <div className="new-user-box">
-            <button 
+            <button
               className="new-user-button"
               onClick={() => setIsNewUserModalOpen(true)}
             >
@@ -78,8 +72,8 @@ function Home() {
         </div>
       </main>
       <Footer />
-      
-      <NewUserModal 
+
+      <NewUserModal
         isOpen={isNewUserModalOpen}
         onClose={() => setIsNewUserModalOpen(false)}
       />
@@ -93,4 +87,4 @@ function Home() {
   );
 }
 
-export default Home; 
+export default Home;

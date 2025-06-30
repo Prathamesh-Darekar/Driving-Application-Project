@@ -49,7 +49,7 @@ const customerSchema = new Schema({
   amountPaidDate: {
     type: String,
   },
-  Note: {
+  notes: {
     type: String,
   },
 });

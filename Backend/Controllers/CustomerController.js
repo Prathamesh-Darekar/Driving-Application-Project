@@ -1,4 +1,4 @@
-const Customer = require("../models/UserModel");
+const getConnection = require("../utils/MysqlConfig");
 
 const login = async (req, res) => {
   // SEND DATA IN THIS FORMAT
@@ -74,10 +74,27 @@ const addCustomer = async (req, res) => {
   ) {
     res.status(400).json({ message: "Bad request! Insufficient data" });
   }
-  // res.send(req.body);
-  const newEntry = new Customer(req.body);
-  await newEntry.save();
-  return res.status(200).json({ message: "Record inserted successfully" });
+  const connection = await getConnection();
+  let qry = `insert into customer(customerName,contactNumber,address,documentType,documentSubType,totalAmount,applicationDate,applicationStatus,advancePayment,balance,amountPaidDate,notes) values(?,?,?,?,?,?,?,?,?,?,?,?)`;
+  const [result] = await connection.execute(qry, [
+    customerName,
+    contactNumber,
+    address,
+    documentType,
+    documentSubType,
+    totalAmount,
+    applicationDate,
+    applicationStatus,
+    advancePayment,
+    balance,
+    amountPaidDate,
+    notes,
+  ]);
+  if (result.affectedRows == 1) {
+    return res.status(201).json({ message: "Record inserted successfully" });
+  } else {
+    return res.status(500).json({ message: "Record not inserted" });
+  }
 };
 
 const searchCustomer = async (req, res) => {
@@ -86,14 +103,15 @@ const searchCustomer = async (req, res) => {
     return res
       .status(400)
       .json({ message: "Bad request! Enter contact Number" });
-  const targetCustomer = await Customer.find({ contactNumber });
-  if (targetCustomer.length === 0)
+  const connection = await getConnection();
+  const qry = "select * from customer where contactNumber=?";
+  const values = [contactNumber];
+  const [result] = await connection.execute(qry, values);
+  if (result.length === 0)
     return res
       .status(404)
       .json({ message: "Contact number does not exists in the database" });
-  return res
-    .status(200)
-    .json({ message: "Success", customerData: targetCustomer });
+  return res.status(200).json({ message: "Success", customerData: result });
 };
 
-module.exports = { login, addCustomer, searchCustomer };
+module.exports = { addCustomer, login, searchCustomer };

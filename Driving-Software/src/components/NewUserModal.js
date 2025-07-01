@@ -77,7 +77,7 @@ function NewUserModal({ isOpen, onClose }) {
         "http://localhost:8000/api/addCustomer",
         formData
       );
-      if (response.status == 200) {
+      if (response.status == 201) {
         alert("New user added successfully!");
         setFormData({
           customerName: "",

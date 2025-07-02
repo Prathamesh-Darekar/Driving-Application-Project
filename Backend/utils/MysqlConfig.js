@@ -6,7 +6,7 @@ const connect_sql = async () => {
     user: "root",
     port: "3306",
     database: "drivingsoftware",
-    password: "Pr@tz19D",
+    password: "uttam@123",
   });
   return connection;
 };

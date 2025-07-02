@@ -28,38 +28,27 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
 
   useEffect(() => {
     if (userData) {
-      setFormData({
-        ...userData,
-        address: userData.address || 'Address not provided',
-        applicationDate: userData.applicationDate || new Date().toISOString().split('T')[0],
-        amountPaidDate: userData.amountPaidDate || new Date().toISOString().split('T')[0],
-        isFullyPaid: parseFloat(userData.balance) <= 0
-      });
-      // Simulate loading documents
-      setDocuments([
-        {
-          documentType: 'License',
-          documentSubType: 'New',
-          totalAmount: '5000',
-          advancePayment: '3000',
-          balance: '2000',
-          applicationStatus: 'Pending',
-          applicationDate: '2024-01-15',
-          amountPaidDate: '2024-01-15',
-          notes: 'Customer requested urgent processing'
-        },
-        {
-          documentType: 'Insurance',
-          documentSubType: 'New',
-          totalAmount: '3000',
-          advancePayment: '3000',
-          balance: '0',
-          applicationStatus: 'Completed',
-          applicationDate: '2024-01-10',
-          amountPaidDate: '2024-01-10',
-          notes: 'Insurance policy activated successfully'
-        }
-      ]);
+      if (Array.isArray(userData) && userData.length > 0) {
+        setDocuments(userData);
+        setFormData({
+          ...userData[0],
+          address: userData[0].address || 'Address not provided',
+          applicationDate: userData[0].applicationDate || new Date().toISOString().split('T')[0],
+          amountPaidDate: userData[0].amountPaidDate || new Date().toISOString().split('T')[0],
+          isFullyPaid: parseFloat(userData[0].balance) <= 0
+        });
+      } else if (typeof userData === 'object' && userData !== null) {
+        setFormData({
+          ...userData,
+          address: userData.address || 'Address not provided',
+          applicationDate: userData.applicationDate || new Date().toISOString().split('T')[0],
+          amountPaidDate: userData.amountPaidDate || new Date().toISOString().split('T')[0],
+          isFullyPaid: parseFloat(userData.balance) <= 0
+        });
+        setDocuments([]);
+      } else {
+        setDocuments([]);
+      }
     }
   }, [userData]);
 

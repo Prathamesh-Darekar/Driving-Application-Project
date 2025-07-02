@@ -11,7 +11,7 @@ function Home() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [isNewUserModalOpen, setIsNewUserModalOpen] = useState(false);
   const [isUserDetailsModalOpen, setIsUserDetailsModalOpen] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
 
   const handleSearch = async (e) => {
@@ -23,7 +23,8 @@ function Home() {
         `http://localhost:8000/api/${mobileNumber}`
       );
       if (response.status == 200) {
-        setUserData(response.data.customerData[0]);
+        setUserData(response.data.customerData);
+        console.log(response.data);
         setIsUserDetailsModalOpen(true);
         // console.log(response.data.customerData[0]);
       }

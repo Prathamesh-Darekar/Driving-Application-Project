@@ -423,38 +423,33 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
           }} onClick={e => e.stopPropagation()}>
             
             {/* Close Button */}
-            <button 
+            <button
               onClick={closeViewModal}
+              aria-label="Close"
               style={{
                 position: 'absolute',
                 top: '1.5rem',
                 right: '1.5rem',
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                color: '#ef4444',
+                background: 'none',
+                border: 'none',
+                borderRadius: '50%',
                 width: '40px',
                 height: '40px',
-                borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                fontSize: '1.1rem',
-                border: 'none'
+                transition: 'background 0.2s',
+                zIndex: 1000,
               }}
-              onMouseOver={(e) => {
-                e.target.style.background = '#ef4444';
-                e.target.style.color = 'white';
-                e.target.style.transform = 'scale(1.1)';
+              onMouseOver={e => {
+                e.target.style.background = 'rgba(239, 68, 68, 0.15)';
               }}
-              onMouseOut={(e) => {
-                e.target.style.background = 'rgba(239, 68, 68, 0.1)';
-                e.target.style.color = '#ef4444';
-                e.target.style.transform = 'scale(1)';
+              onMouseOut={e => {
+                e.target.style.background = 'none';
               }}
             >
-              <i className="fas fa-times"></i>
+              <i className="fas fa-times" style={{ color: '#ef4444', fontSize: '1.5rem', pointerEvents: 'none' }}></i>
             </button>
 
             {/* Header */}
@@ -683,40 +678,6 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
                     fontWeight: '600',
                     margin: '0'
                   }}>Payment Information</h4>
-                </div>
-                
-                {/* Payment Progress */}
-                <div style={{marginBottom: '1.5rem'}}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    marginBottom: '1rem'
-                  }}>
-                    <div style={{
-                      flex: '1',
-                      height: '8px',
-                      background: '#e2e8f0',
-                      borderRadius: '4px',
-                      overflow: 'hidden'
-                    }}>
-                      <div style={{
-                        height: '100%',
-                        background: 'linear-gradient(90deg, #10b981, #059669)',
-                        borderRadius: '4px',
-                        width: `${(parseFloat(viewingDocument.advancePayment) / parseFloat(viewingDocument.totalAmount)) * 100}%`
-                      }}></div>
-                    </div>
-                    <div style={{
-                      fontSize: '0.9rem',
-                      fontWeight: '600',
-                      color: '#059669',
-                      minWidth: '80px',
-                      textAlign: 'right'
-                    }}>
-                      {Math.round((parseFloat(viewingDocument.advancePayment) / parseFloat(viewingDocument.totalAmount)) * 100)}% Paid
-                    </div>
-                  </div>
                 </div>
                 
                 <div style={{

@@ -25,12 +25,9 @@ function Home() {
       );
       if (response.status == 200) {
         setUserData(response.data.customerData);
-        console.log(response.data);
         setIsUserDetailsModalOpen(true);
-        // console.log(response.data.customerData[0]);
       }
     } catch (error) {
-      console.error("Error searching for user:", error);
       if (error.response && error.response.status === 404) {
         toast.error('Mobile number not found!', { position: 'top-center' });
       } else {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./NewUserModal.css";
 import axios from "axios";
+import { toast, Toaster } from 'react-hot-toast';
 
 function NewUserModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -78,7 +79,7 @@ function NewUserModal({ isOpen, onClose }) {
         formData
       );
       if (response.status == 201) {
-        alert("New user added successfully!");
+        toast.success("New user added successfully!", { position: 'top-center' });
         setFormData({
           customerName: "",
           contactNumber: "",
@@ -97,7 +98,7 @@ function NewUserModal({ isOpen, onClose }) {
         onClose();
       }
     } catch (e) {
-      alert(e.response?.data?.message || e.message);
+      toast.error(e.response?.data?.message || e.message, { position: 'top-center' });
     } finally {
       setIsSubmitting(false);
     }
@@ -108,6 +109,7 @@ function NewUserModal({ isOpen, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <Toaster position="top-center" />
         <button className="close-button" onClick={onClose} aria-label="Close">
           <i className="fas fa-times"></i>
         </button>

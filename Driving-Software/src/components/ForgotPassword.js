@@ -8,7 +8,6 @@ function ForgotPassword() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add your password reset logic here
-    console.log('Password reset requested for:', email);
   };
 
   return (

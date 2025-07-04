@@ -57,14 +57,9 @@ function CustomerDocuments({ documents, onUpdateDocument, onViewDocument, onDele
   };
 
   const handleViewDocument = (doc) => {
-    console.log('CustomerDocuments handleViewDocument called with:', doc);
-    console.log('onViewDocument prop:', onViewDocument);
     if (onViewDocument) {
-      console.log('Calling onViewDocument function');
       onViewDocument(doc);
     } else {
-      console.log('onViewDocument prop is not available, showing alert');
-      // Default behavior - show document details in a simple alert
       const details = `
 Document Details:
 Type: ${doc.documentType} - ${doc.documentSubType}

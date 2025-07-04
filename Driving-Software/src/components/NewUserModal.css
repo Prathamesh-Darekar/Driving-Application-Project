@@ -169,6 +169,8 @@
   z-index: 1;
   width: 100%;
   box-sizing: border-box;
+  height: 2.5rem;
+  font-size: 1rem;
 }
 
 .input-icon {
@@ -177,10 +179,23 @@
   top: 50%;
   transform: translateY(-50%);
   color: #6c757d;
-  font-size: 1rem;
+  font-size: 1.1rem;
   pointer-events: none;
   z-index: 2;
   background: transparent;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-group input:focus {
+  outline: 2px solid #007cf0;
+  background: #f0f8ff;
+}
+
+.input-icon-group input::placeholder {
+  color: #b0b8c1;
+  opacity: 1;
 }
 
 /* Ensure proper spacing for all form elements */

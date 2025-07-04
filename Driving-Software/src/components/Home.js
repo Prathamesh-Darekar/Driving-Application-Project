@@ -6,6 +6,7 @@ import NewUserModal from "./NewUserModal";
 import UserDetailsModal from "./UserDetailsModal";
 import axios from "axios";
 import "./Home.css";
+import { toast, Toaster } from 'react-hot-toast';
 
 function Home() {
   const [mobileNumber, setMobileNumber] = useState("");
@@ -30,13 +31,17 @@ function Home() {
       }
     } catch (error) {
       console.error("Error searching for user:", error);
-      alert(e.response?.data?.message || e.message);
-      // Handle error (show error message, etc.)
+      if (error.response && error.response.status === 404) {
+        toast.error('Mobile number not found!', { position: 'top-center' });
+      } else {
+        toast.error(error.response?.data?.message || error.message, { position: 'top-center' });
+      }
     }
   };
 
   return (
     <div className="home-container">
+      <Toaster position="top-center" />
       <Header />
       <main className="main-content">
         <div className="search-container">

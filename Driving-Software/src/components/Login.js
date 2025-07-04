@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast';
 import "./Login.css";
 
 function Login() {
@@ -33,10 +34,11 @@ function Login() {
         formData
       );
       if (response.status == 200) {
+        localStorage.setItem('isAuthenticated', 'true');
         navigate("/home");
       }
     } catch (e) {
-      alert(e.response?.data?.message || e.message);
+      toast.error(e.response?.data?.message || e.message);
     }
   };
 
@@ -89,14 +91,6 @@ function Login() {
             <i className="fas fa-sign-in-alt"></i> Sign In
           </button>
         </form>
-        <div className="divider-pro">
-          <span>or</span>
-        </div>
-        <div className="forgot-password-pro">
-          <Link to="/forgot-password">
-            <i className="fas fa-key"></i> Forgot Password?
-          </Link>
-        </div>
       </div>
     </div>
   );

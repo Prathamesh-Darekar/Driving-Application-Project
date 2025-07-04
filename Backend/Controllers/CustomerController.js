@@ -114,4 +114,57 @@ const searchCustomer = async (req, res) => {
   return res.status(200).json({ message: "Success", customerData: result });
 };
 
-module.exports = { addCustomer, login, searchCustomer };
+const updateCustomerDocument = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({ message: "Document id is required" });
+  }
+
+  // Only allow these fields to be updated
+  const allowedFields = [
+    "customerName",
+    "contactNumber",
+    "address",
+    "documentType",
+    "documentSubType",
+    "applicationDate",
+    "applicationStatus",
+    "totalAmount",
+    "advancePayment",
+    "balance",
+    "amountPaidDate",
+    "notes"
+  ];
+
+  // Build the update query dynamically
+  const fields = [];
+  const values = [];
+  for (const key of allowedFields) {
+    if (req.body[key] !== undefined) {
+      fields.push(`${key}=?`);
+      values.push(req.body[key]);
+    }
+  }
+  if (fields.length === 0) {
+    return res.status(400).json({ message: "No valid fields to update" });
+  }
+  values.push(id);
+
+  try {
+    const connection = await getConnection();
+    const qry = `UPDATE customer SET ${fields.join(", ")} WHERE id=?`;
+    const [result] = await connection.execute(qry, values);
+    if (result.affectedRows === 1) {
+      // Fetch the updated document and return it
+      const [updatedRows] = await connection.execute("SELECT * FROM customer WHERE id=?", [id]);
+      return res.status(200).json({ message: "Document updated successfully", updatedDocument: updatedRows[0] });
+    } else {
+      return res.status(404).json({ message: "Document not found or not updated" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error updating document", error: error.message });
+  }
+};
+
+module.exports = { addCustomer, login, searchCustomer, updateCustomerDocument };

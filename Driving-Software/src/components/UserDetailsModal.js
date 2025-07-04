@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import CustomerDocuments from './CustomerDocuments';
 import './UserDetailsModal.css';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 function UserDetailsModal({ isOpen, onClose, userData }) {
   const [formData, setFormData] = useState({
@@ -89,33 +91,36 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Form updated:', formData);
-      
-      // Update the documents list with the new data
-      const updatedDocuments = documents.map(doc => 
-        doc.documentType === editingDocument.documentType && 
-        doc.documentSubType === editingDocument.documentSubType 
-          ? { ...formData } 
-          : doc
+      const updateData = {
+        applicationStatus: formData.applicationStatus,
+        totalAmount: formData.totalAmount,
+        notes: formData.notes,
+      };
+      const response = await axios.put(
+        `http://localhost:8000/api/updateDocument/${formData.id}`,
+        updateData
       );
-      setDocuments(updatedDocuments);
-      setIsEditing(false);
-      setEditingDocument(null);
-      // Update formData with customerName and contactNumber from userData if available
-      setFormData(prev => ({
-        ...prev,
-        customerName: userData?.customerName || prev.customerName,
-        contactNumber: userData?.contactNumber || prev.contactNumber
-      }));
-      // Show success message
-      alert('Document updated successfully!');
+      if (response.status === 200 && response.data.updatedDocument) {
+        // Use the updated document from backend
+        const updatedDoc = response.data.updatedDocument;
+        const updatedDocuments = documents.map(doc =>
+          doc.id === updatedDoc.id ? updatedDoc : doc
+        );
+        setDocuments(updatedDocuments);
+        setIsEditing(false);
+        setEditingDocument(null);
+        setFormData(prev => ({
+          ...prev,
+          ...updatedDoc
+        }));
+        toast.success('Document updated successfully!');
+      } else {
+        toast.error('Error updating document. Please try again.');
+      }
     } catch (error) {
       console.error('Error updating form:', error);
-      alert('Error updating document. Please try again.');
+      toast.error('Error updating document. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

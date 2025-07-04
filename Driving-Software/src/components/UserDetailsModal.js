@@ -150,18 +150,36 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
     setViewingDocument(null);
   };
 
-  const handleDeleteDocument = async (doc) => {
-    try {
-      const updatedDocuments = documents.filter(d => d !== doc);
-      setDocuments(updatedDocuments);
-      // Here you would typically make an API call to delete from the backend
-      // For now, we'll just update the local state
-      console.log('Document deleted:', doc);
-      toast.success('Document deleted successfully!');
-    } catch (error) {
-      console.error('Error deleting document:', error);
-      toast.error('Failed to delete document. Please try again.');
-    }
+  const handleDeleteDocument = (doc) => {
+    toast((t) => (
+      <span>
+        Are you sure you want to delete this document?
+        <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+          <button
+            style={{ background: '#ef4444', color: 'white', border: 'none', padding: '4px 12px', borderRadius: 4, cursor: 'pointer' }}
+            onClick={async () => {
+              toast.dismiss(t.id);
+              try {
+                await axios.delete(`http://localhost:8000/api/deleteDocument/${doc.id}`);
+                const updatedDocuments = documents.filter(d => d.id !== doc.id);
+                setDocuments(updatedDocuments);
+                toast.success('Document deleted successfully!');
+              } catch (error) {
+                toast.error('Failed to delete document. Please try again.');
+              }
+            }}
+          >
+            Yes
+          </button>
+          <button
+            style={{ background: '#e5e7eb', color: '#111', border: 'none', padding: '4px 12px', borderRadius: 4, cursor: 'pointer' }}
+            onClick={() => toast.dismiss(t.id)}
+          >
+            No
+          </button>
+        </div>
+      </span>
+    ));
   };
 
   const getDocumentIcon = (type) => {
@@ -201,7 +219,7 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content user-details-modal" onClick={e => e.stopPropagation()}>
-        <Toaster position="top-right" reverseOrder={false} />
+        <Toaster position="top-center" reverseOrder={false} />
         <button className="close-button" onClick={onClose} aria-label="Close">
           <i className="fas fa-times"></i>
         </button>
@@ -639,30 +657,6 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
                       display: 'block'
                     }}>{viewingDocument.documentSubType}</span>
                   </div>
-                  
-                  <div>
-                    <label style={{
-                      fontSize: '0.85rem',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      display: 'block',
-                      marginBottom: '0.5rem'
-                    }}>Processing Priority</label>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '20px',
-                      fontSize: '0.85rem',
-                      fontWeight: '600',
-                      background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-                      color: 'white',
-                      textAlign: 'center'
-                    }}>
-                      {parseFloat(viewingDocument.balance) <= 0 ? 'High Priority' : 'Standard Priority'}
-                    </span>
-                  </div>
                 </div>
               </div>
 
@@ -880,50 +874,6 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
                       day: 'numeric'
                     })}</span>
                   </div>
-                  
-                  <div>
-                    <label style={{
-                      fontSize: '0.85rem',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      display: 'block',
-                      marginBottom: '0.5rem'
-                    }}>Processing Time</label>
-                    <span style={{
-                      fontSize: '1rem',
-                      color: '#3b82f6',
-                      fontWeight: '600'
-                    }}>
-                      {(() => {
-                        const appDate = new Date(viewingDocument.applicationDate);
-                        const today = new Date();
-                        const diffTime = Math.abs(today - appDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
-                      })()}
-                    </span>
-                  </div>
-                  
-                  <div>
-                    <label style={{
-                      fontSize: '0.85rem',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      display: 'block',
-                      marginBottom: '0.5rem'
-                    }}>Estimated Completion</label>
-                    <span style={{
-                      fontSize: '1rem',
-                      color: '#059669',
-                      fontWeight: '600'
-                    }}>
-                      {viewingDocument.applicationStatus === 'Completed' ? 'Completed' : 'Within 7-10 days'}
-                    </span>
-                  </div>
                 </div>
               </div>
 
@@ -976,76 +926,6 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
                 justifyContent: 'center',
                 marginTop: '1rem'
               }}>
-                <button 
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '12px',
-                    fontWeight: '600',
-                    fontSize: '0.95rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
-                    color: '#374151',
-                    border: '1px solid #d1d5db'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.background = 'linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%)';
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.background = 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)';
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                  onClick={() => {
-                    closeViewModal();
-                    handleUpdateDocument(viewingDocument);
-                  }}
-                >
-                  <i className="fas fa-edit"></i>
-                  Edit Document
-                </button>
-                <button 
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '12px',
-                    fontWeight: '600',
-                    fontSize: '0.95rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    color: 'white',
-                    boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.background = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.4)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 4px 15px rgba(239, 68, 68, 0.3)';
-                  }}
-                  onClick={() => {
-                    if (window.confirm(`Are you sure you want to delete this ${viewingDocument.documentType} document? This action cannot be undone.`)) {
-                      closeViewModal();
-                      handleDeleteDocument(viewingDocument);
-                    }
-                  }}
-                >
-                  <i className="fas fa-trash"></i>
-                  Delete Document
-                </button>
                 <button 
                   style={{
                     display: 'flex',

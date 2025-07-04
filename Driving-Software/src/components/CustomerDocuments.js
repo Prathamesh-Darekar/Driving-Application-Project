@@ -81,10 +81,8 @@ Notes: ${doc.notes || 'No notes available'}
   };
 
   const handleDeleteDocument = (doc) => {
-    if (window.confirm(`Are you sure you want to delete this ${doc.documentType} document? This action cannot be undone.`)) {
-      if (onDeleteDocument) {
-        onDeleteDocument(doc);
-      }
+    if (onDeleteDocument) {
+      onDeleteDocument(doc);
     }
   };
 

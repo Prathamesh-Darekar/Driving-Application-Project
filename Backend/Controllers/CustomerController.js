@@ -167,4 +167,24 @@ const updateCustomerDocument = async (req, res) => {
   }
 };
 
-module.exports = { addCustomer, login, searchCustomer, updateCustomerDocument };
+const deleteCustomerDocument = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({ message: "Document id is required" });
+  }
+  try {
+    const connection = await getConnection();
+    const qry = `DELETE FROM customer WHERE id=?`;
+    const [result] = await connection.execute(qry, [id]);
+    if (result.affectedRows === 1) {
+      return res.status(200).json({ message: "Document deleted successfully" });
+    } else {
+      return res.status(404).json({ message: "Document not found or not deleted" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error deleting document", error: error.message });
+  }
+};
+
+module.exports = { addCustomer, login, searchCustomer, updateCustomerDocument, deleteCustomerDocument };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CustomerDocuments from './CustomerDocuments';
 import './UserDetailsModal.css';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 function UserDetailsModal({ isOpen, onClose, userData }) {
   const [formData, setFormData] = useState({
@@ -102,7 +102,6 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
         updateData
       );
       if (response.status === 200 && response.data.updatedDocument) {
-        // Use the updated document from backend
         const updatedDoc = response.data.updatedDocument;
         const updatedDocuments = documents.map(doc =>
           doc.id === updatedDoc.id ? updatedDoc : doc
@@ -153,19 +152,15 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
 
   const handleDeleteDocument = async (doc) => {
     try {
-      // Remove the document from the local state
       const updatedDocuments = documents.filter(d => d !== doc);
       setDocuments(updatedDocuments);
-      
       // Here you would typically make an API call to delete from the backend
       // For now, we'll just update the local state
       console.log('Document deleted:', doc);
-      
-      // Show success message
-      alert('Document deleted successfully!');
+      toast.success('Document deleted successfully!');
     } catch (error) {
       console.error('Error deleting document:', error);
-      alert('Failed to delete document. Please try again.');
+      toast.error('Failed to delete document. Please try again.');
     }
   };
 
@@ -206,6 +201,7 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content user-details-modal" onClick={e => e.stopPropagation()}>
+        <Toaster position="top-right" reverseOrder={false} />
         <button className="close-button" onClick={onClose} aria-label="Close">
           <i className="fas fa-times"></i>
         </button>

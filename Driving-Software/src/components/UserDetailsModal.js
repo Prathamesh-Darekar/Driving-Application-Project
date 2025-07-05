@@ -72,15 +72,29 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
   }, [formData.documentType]);
 
   useEffect(() => {
-    // Calculate balance
+    // Calculate balance only if totalAmount or advancePayment changes
+    // Don't override manual balance changes
     const total = parseFloat(formData.totalAmount) || 0;
     const advance = parseFloat(formData.advancePayment) || 0;
-    const balance = total - advance;
-    setFormData(prev => ({ 
-      ...prev, 
-      balance: balance.toFixed(2),
-      isFullyPaid: balance <= 0
-    }));
+    const calculatedBalance = total - advance;
+    
+    // Only update balance if it hasn't been manually set or if it matches the calculated value
+    const currentBalance = parseFloat(formData.balance) || 0;
+    const shouldUpdateBalance = Math.abs(currentBalance - calculatedBalance) < 0.01; // Allow for small floating point differences
+    
+    if (shouldUpdateBalance) {
+      setFormData(prev => ({ 
+        ...prev, 
+        balance: calculatedBalance.toFixed(2),
+        isFullyPaid: calculatedBalance <= 0
+      }));
+    } else {
+      // Update isFullyPaid based on current balance
+      setFormData(prev => ({ 
+        ...prev, 
+        isFullyPaid: currentBalance <= 0
+      }));
+    }
   }, [formData.totalAmount, formData.advancePayment]);
 
   const handleChange = (e) => {
@@ -95,6 +109,7 @@ function UserDetailsModal({ isOpen, onClose, userData }) {
       const updateData = {
         applicationStatus: formData.applicationStatus,
         totalAmount: formData.totalAmount,
+        balance: formData.balance,
         notes: formData.notes,
       };
       const response = await axios.put(

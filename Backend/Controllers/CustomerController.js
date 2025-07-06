@@ -12,8 +12,8 @@ const login = async (req, res) => {
       .status(400)
       .json({ message: "Please enter all the credentials." });
   }
-  const adminEmail = "admin@gmail.com";
-  const adminPassword = "admin";
+  const adminEmail = "nirmala12@gmail.com";
+  const adminPassword = "Nirmala@1960";
   if (email.trim() != adminEmail) {
     return res
       .status(401)

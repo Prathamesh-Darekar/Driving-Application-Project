@@ -5,7 +5,7 @@ const { connection } = require("./utils/MysqlConfig");
 const env = require("dotenv").config();
 const customerRoute = require("./Routers/CustomerRoute");
 
-const PORT = process.env.SERVER_PORT;
+const PORT = process.env.SERVER_PORT || 8000;
 app.use(
   cors({
     origin: "*",
@@ -18,5 +18,5 @@ app.use(express.json());
 app.use("/api", customerRoute);
 
 app.listen(PORT, (req, res) => {
-  // console.log("Server Running!!!");
+  console.log(`Server Running on port ${PORT}!!!`);
 });

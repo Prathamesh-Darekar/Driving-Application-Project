@@ -135,20 +135,15 @@ function NewUserModal({ isOpen, onClose }) {
                 <label>
                   Contact Number <span className="required">*</span>
                 </label>
-                <div className="input-icon-group">
-                  <span className="input-icon">
-                    <i className="fas fa-phone"></i>
-                  </span>
-                  <input
-                    type="tel"
-                    name="contactNumber"
-                    value={formData.contactNumber}
-                    onChange={handleChange}
-                    pattern="[0-9]{10}"
-                    maxLength="10"
-                    required
-                  />
-                </div>
+                <input
+                  type="tel"
+                  name="contactNumber"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                  pattern="[0-9]{10}"
+                  maxLength="10"
+                  required
+                />
               </div>
             </div>
             <div className="form-group full-width">
@@ -244,39 +239,29 @@ function NewUserModal({ isOpen, onClose }) {
                 <label>
                   Total Amount <span className="required">*</span>
                 </label>
-                <div className="input-icon-group">
-                  <span className="input-icon">
-                    <i className="fas fa-rupee-sign"></i>
-                  </span>
-                  <input
-                    type="number"
-                    name="totalAmount"
-                    value={formData.totalAmount}
-                    onChange={handleChange}
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
+                <input
+                  type="number"
+                  name="totalAmount"
+                  value={formData.totalAmount}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  required
+                />
               </div>
               <div className="form-group">
                 <label>
                   Advance Payment <span className="required">*</span>
                 </label>
-                <div className="input-icon-group">
-                  <span className="input-icon">
-                    <i className="fas fa-rupee-sign"></i>
-                  </span>
-                  <input
-                    type="number"
-                    name="advancePayment"
-                    value={formData.advancePayment}
-                    onChange={handleChange}
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
+                <input
+                  type="number"
+                  name="advancePayment"
+                  value={formData.advancePayment}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  required
+                />
               </div>
             </div>
             <div className="form-row">
